@@ -46,6 +46,10 @@ func (p *ParserCtx) GetValidationErrors() validationErrorMap {
 	return p.validationErrorMap
 }
 
+func (p *ParserCtx) HasValidationErrors() bool {
+	return p.validationErrorMap.GetLength() > 0
+}
+
 func (p *ParserCtx) SetTagName(tagName string) error {
 	p.tagName = tagName
 	return nil
@@ -138,6 +142,9 @@ type ParserCtxGetter interface {
 	// GetValidationErrors returns the validation errors that were added
 	// when validation failed for a given struct field.
 	GetValidationErrors() validationErrorMap
+	// HasValidationErrors returns a boolean if the validationErrorMap has
+	// a length of greater than 0
+	HasValidationErrors() bool
 }
 
 type ParserCtxSetter interface {
