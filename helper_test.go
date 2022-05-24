@@ -92,6 +92,11 @@ type Config struct {
 	NestedStructs    []nestedStruct  `env:",nested"`
 	NestedStructPtrs []*nestedStruct `env:",nested"`
 
+	EmbeddedStruct               `env:",nested"`
+	*EmbeddedStructPtr           `env:",nested"`
+	embeddedStructUnexported     `env:",nested"`
+	*embeddedStructUnexportedPtr `env:",nested"`
+
 	URL     url.URL    `env:"URL"`
 	URLPtr  *url.URL   `env:"URL"`
 	URLs    []url.URL  `env:"URLS"`
@@ -374,6 +379,22 @@ func (c *Config) GetNestedStructPtr() *nestedStruct {
 	return c.NestedStructPtr
 }
 
+func (c *Config) GetEmbeddedStruct() EmbeddedStruct {
+	return c.EmbeddedStruct
+}
+
+func (c *Config) GetEmbeddedStructPtr() *EmbeddedStructPtr {
+	return c.EmbeddedStructPtr
+}
+
+func (c *Config) GetEmbeddedStructUnexported() embeddedStructUnexported {
+	return c.embeddedStructUnexported
+}
+
+func (c *Config) GetEmbeddedStructUnexportedPtr() *embeddedStructUnexportedPtr {
+	return c.embeddedStructUnexportedPtr
+}
+
 func (c *Config) GetNestedStructs() []nestedStruct {
 	return c.NestedStructs
 }
@@ -499,6 +520,10 @@ type ConfigGetter interface {
 	GetNestedStructPtr() *nestedStruct
 	GetNestedStructs() []nestedStruct
 	GetNestedStructPtrs() []*nestedStruct
+	GetEmbeddedStruct() EmbeddedStruct
+	GetEmbeddedStructPtr() *EmbeddedStructPtr
+	GetEmbeddedStructUnexported() embeddedStructUnexported
+	GetEmbeddedStructUnexportedPtr() *embeddedStructUnexportedPtr
 	GetURL() url.URL
 	GetURLPtr() *url.URL
 	GetURLs() []url.URL

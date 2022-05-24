@@ -32,7 +32,7 @@ func (v validationErrorMap) GetLength() int {
 // v. It is expected to return an error if it fails the validation
 type ValidatorFunc func(parserCtx ParserCtxAccessor, parsedField ParsedFieldGetter) error
 
-var validateRequired = func(parserCtx ParserCtxAccessor, parsedField ParsedFieldGetter) error {
+func validateRequired(parserCtx ParserCtxAccessor, parsedField ParsedFieldGetter) error {
 	if paratils.IsNil(parsedField) {
 		return errgo.NewF("parsed field is nil")
 	}
@@ -45,7 +45,7 @@ var validateRequired = func(parserCtx ParserCtxAccessor, parsedField ParsedField
 	return nil
 }
 
-var validateNotEmpty = func(parserCtx ParserCtxAccessor, parsedField ParsedFieldGetter) error {
+func validateNotEmpty(parserCtx ParserCtxAccessor, parsedField ParsedFieldGetter) error {
 	if paratils.IsNil(parsedField) {
 		return errgo.NewF("parsed field is nil")
 	}

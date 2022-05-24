@@ -17,6 +17,22 @@ type nestedStruct struct {
 	Duration time.Duration `env:"NESTED_DURATION"`
 }
 
+type EmbeddedStruct struct {
+	Value string `env:"EMBEDDED_VALUE"`
+}
+
+type EmbeddedStructPtr struct {
+	Value string `env:"EMBEDDED_VALUE"`
+}
+
+type embeddedStructUnexported struct {
+	Value string `env:"EMBEDDED_VALUE_UNEXPORTED"`
+}
+
+type embeddedStructUnexportedPtr struct {
+	Value string `env:"EMBEDDED_VALUE_UNEXPORTED"`
+}
+
 type unmarshaler struct {
 	time.Duration
 }
@@ -377,21 +393,39 @@ func TestParse(t *testing.T) {
 			},
 		},
 		{
+			envKey:   "EMBEDDED_VALUE",
+			envValue: "test",
+			assertion: func(t *testing.T, getter ConfigGetter) {
+				expectedValue := "test"
+				require.Equal(t, expectedValue, getter.GetEmbeddedStruct().Value)
+				require.Equal(t, expectedValue, getter.GetEmbeddedStructPtr().Value)
+			},
+		},
+		{
+			envKey:   "EMBEDDED_VALUE_UNEXPORTED",
+			envValue: "test",
+			assertion: func(t *testing.T, getter ConfigGetter) {
+				expectedValue := ""
+				require.Equal(t, expectedValue, getter.GetEmbeddedStructUnexported().Value)
+				require.Nil(t, getter.GetEmbeddedStructUnexportedPtr())
+			},
+		},
+		{
 			envKey:   "URL",
-			envValue: "https://joinpara.com",
+			envValue: "https://envartest.com",
 			assertion: func(t *testing.T, getter ConfigGetter) {
 				url := getter.GetURL()
-				require.Equal(t, "https://joinpara.com", url.String())
-				require.Equal(t, "https://joinpara.com", getter.GetURLPtr().String())
+				require.Equal(t, "https://envartest.com", url.String())
+				require.Equal(t, "https://envartest.com", getter.GetURLPtr().String())
 			},
 		},
 		{
 			envKey:   "URLS",
-			envValue: "https://joinpara.com,https://joinpara.app",
+			envValue: "https://envartest.com,https://testing.app",
 			assertion: func(t *testing.T, getter ConfigGetter) {
 				expectedURLs := []string{
-					"https://joinpara.com",
-					"https://joinpara.app",
+					"https://envartest.com",
+					"https://testing.app",
 				}
 				for i := range getter.GetURLs() {
 					require.Equal(t, expectedURLs[i], getter.GetURLs()[i].String())
