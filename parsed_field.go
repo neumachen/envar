@@ -1,11 +1,12 @@
 package envar
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 
-	"github.com/ParaServices/errgo"
-	"github.com/ParaServices/paratils"
+	"github.com/neumachen/errorx"
+	"github.com/neumachen/gohelpers"
 )
 
 func newParsedField(parserCtx *ParserCtx, structField reflect.StructField) (*parsedField, error) {
@@ -17,7 +18,7 @@ func newParsedField(parserCtx *ParserCtx, structField reflect.StructField) (*par
 	}
 
 	if err := parseStructField(pField); err != nil {
-		return nil, errgo.New(err)
+		return nil, errorx.New(err)
 	}
 
 	if !pField.tagFound {
@@ -55,7 +56,7 @@ func (p *parsedField) GetDefaultValue() string {
 // getFieldValue returns the default value if GetEnvValue returns an empty
 // string ("even if the value is blank")
 func (p *parsedField) getFieldValue() string {
-	if v := p.GetEnvValue(); !paratils.StringIsEmpty(v) {
+	if v := p.GetEnvValue(); !gohelpers.StringIsEmpty(v) {
 		return v
 	}
 	return p.GetDefaultValue()
@@ -74,7 +75,7 @@ func (p *parsedField) GetEnvPrefix() string {
 
 // GetEnvKey joins the EnvPrefix and EnvName
 func (p *parsedField) GetEnvKey() string {
-	if paratils.StringIsEmpty(p.GetEnvPrefix()) {
+	if gohelpers.StringIsEmpty(p.GetEnvPrefix()) {
 		return p.GetEnvName()
 	}
 	return strings.Join([]string{p.GetEnvPrefix(), p.GetEnvName()}, p.envPrefixDelim)
@@ -108,10 +109,10 @@ func (p *parsedField) validate(parserCtx *ParserCtx) error {
 	for i := range p.tagOpts.getValidate() {
 		vFunc, ok := parserCtx.validatorFuncsMap[p.tagOpts.getValidate()[i]]
 		if !ok {
-			return errgo.NewF("validator func: %s not found", p.tagOpts.getValidate()[i])
+			return errorx.New(fmt.Sprintf("validator func: %s not found", p.tagOpts.getValidate()[i]))
 		}
 		if err := vFunc(parserCtx, p); err != nil {
-			return errgo.New(err)
+			return errorx.New(err)
 		}
 	}
 
@@ -139,7 +140,7 @@ func (p *parsedField) setEnvValue(eMap EnvVarsMap) error {
 }
 
 func (p *parsedField) setField(parserCtx *ParserCtx, fieldValue reflect.Value) error {
-	if v := p.getFieldValue(); paratils.StringIsEmpty(v) {
+	if v := p.getFieldValue(); gohelpers.StringIsEmpty(v) {
 		return nil
 	}
 
@@ -162,7 +163,7 @@ func (p *parsedField) setField(parserCtx *ParserCtx, fieldValue reflect.Value) e
 	}
 
 	parserFunc := parserCtx.GetParserFuncMap().Get(p.GetStructField().Type)
-	if !paratils.IsNil(parserFunc) {
+	if !gohelpers.IsNil(parserFunc) {
 		val, err := parserFunc(p.getFieldValue())
 		if err != nil {
 			return newParseError(p.GetStructField(), err)
@@ -234,7 +235,7 @@ func (t tagOpts) getUnsetKey() bool {
 	if !ok {
 		return false
 	}
-	return paratils.ArrayContainsStr(trueStrs, v)
+	return gohelpers.ArrayContainsStr(trueStrs, v)
 }
 
 // func (t tagOpts) getExpandKey() bool {
@@ -242,7 +243,7 @@ func (t tagOpts) getUnsetKey() bool {
 // 	if !ok {
 // 		return false
 // 	}
-// 	return paratils.ArrayContainsStr(trueStrs, v)
+// 	return gohelpers.ArrayContainsStr(trueStrs, v)
 // }
 
 func (t tagOpts) getDefaultValue() string {
@@ -257,7 +258,7 @@ func removeEmptyString(slice *[]string) {
 	i := 0
 	p := *slice
 	for _, entry := range p {
-		if !paratils.StringIsEmpty(entry) {
+		if !gohelpers.StringIsEmpty(entry) {
 			p[i] = entry
 			i++
 		}
@@ -317,7 +318,7 @@ func parseStructField(p *parsedField) error {
 		case tagOptsDefaultKey:
 			p.setTagOpts(tagOptsDefaultKey, tagOptsKeyVals[1])
 		default:
-			return errgo.NewF("unrecognized field option key: %s", tagOptsKeyVals[0])
+			return errorx.New(fmt.Sprintf("unrecognized field option key: %s", tagOptsKeyVals[0]))
 		}
 	}
 

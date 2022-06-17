@@ -3,7 +3,7 @@ package envar
 import (
 	"reflect"
 
-	"github.com/ParaServices/paratils"
+	"github.com/neumachen/gohelpers"
 )
 
 type ParserCtx struct {
@@ -84,7 +84,7 @@ func (p *ParserCtx) SetParserFuncMap(fnMap ParserFuncMap) error {
 }
 
 func (p *ParserCtx) AddParserFunc(rType reflect.Type, fn ParserFunc) {
-	if paratils.IsNil(rType) {
+	if gohelpers.IsNil(rType) {
 		return
 	}
 	if p.parserFuncMap == nil {
@@ -102,7 +102,7 @@ func (p *ParserCtx) SetValidatorFuncsMap(fnMap ValidatorFuncsMap) error {
 }
 
 func (p *ParserCtx) AddValidatorFunc(validatorKey string, fn ValidatorFunc) {
-	if paratils.IsNil(fn) {
+	if gohelpers.IsNil(fn) {
 		return
 	}
 	if p.validatorFuncsMap == nil {

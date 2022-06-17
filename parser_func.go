@@ -1,6 +1,7 @@
 package envar
 
 import (
+	"fmt"
 	"net/url"
 	"os"
 	"reflect"
@@ -8,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ParaServices/errgo"
-	"github.com/ParaServices/paratils"
+	"github.com/neumachen/errorx"
+	"github.com/neumachen/gohelpers"
 )
 
 // ParserFunc defines the signature of a function that can be used within `CustomParsers`.
@@ -94,26 +95,26 @@ func defaultParserFuncs() ParserFuncMap {
 		reflect.TypeOf(url.URL{}): func(v string) (interface{}, error) {
 			u, err := url.Parse(v)
 			if err != nil {
-				return nil, errgo.NewF("unable to parse URL: %v", err)
+				return nil, errorx.New(fmt.Sprintf("unable to parse URL: %v", err.Error()))
 			}
 			return *u, nil
 		},
 		reflect.TypeOf(os.File{}): func(v string) (interface{}, error) {
-			if paratils.StringIsEmpty(v) {
-				return nil, errgo.NewF("The file %v can not be empty", v)
+			if gohelpers.StringIsEmpty(v) {
+				return nil, errorx.New(fmt.Sprintf("The file %v can not be empty", v))
 			}
 
 			fileInfo, err := os.Stat(v)
 			if err != nil {
 				if os.IsNotExist(err) {
-					return nil, errgo.NewF("The file %v does not exist", v)
+					return nil, errorx.New(fmt.Sprintf("The file %v does not exist", v))
 				}
 
 				return nil, err
 			}
 
 			if fileInfo.IsDir() {
-				return nil, errgo.NewF("The file %v is a directory", v)
+				return nil, errorx.New(fmt.Sprintf("The file %v is a directory", v))
 			}
 
 			f, err := os.Open(v)
@@ -125,7 +126,7 @@ func defaultParserFuncs() ParserFuncMap {
 		reflect.TypeOf(time.Nanosecond): func(v string) (interface{}, error) {
 			d, err := time.ParseDuration(strings.TrimSpace(v))
 			if err != nil {
-				return nil, errgo.NewF("unable to parse duration: %v", err)
+				return nil, errorx.New(fmt.Sprintf("unable to parse duration: %v", err.Error()))
 			}
 			return d, err
 		},

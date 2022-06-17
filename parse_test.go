@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ParaServices/errgo"
-	"github.com/ParaServices/paratils"
+	"github.com/neumachen/errorx"
+	"github.com/neumachen/gohelpers"
 	"github.com/stretchr/testify/require"
 )
 
@@ -44,7 +44,7 @@ func (u *unmarshaler) UnmarshalText(data []byte) error {
 	}
 	parsedDuration, err := time.ParseDuration(string(data))
 	if err != nil {
-		return errgo.New(err)
+		return errorx.New(err)
 	}
 	*u = unmarshaler{parsedDuration}
 
@@ -513,7 +513,7 @@ func TestParse(t *testing.T) {
 
 	t.Run("embedded", func(t *testing.T) {
 		for i := range testData {
-			if v := testData[i].envKey; paratils.StringIsEmpty(v) {
+			if v := testData[i].envKey; gohelpers.StringIsEmpty(v) {
 				continue
 			}
 			os.Setenv(testData[i].envKey, testData[i].envValue)
@@ -542,7 +542,7 @@ func TestParse(t *testing.T) {
 
 	t.Run("without prefix", func(t *testing.T) {
 		for i := range testData {
-			if v := testData[i].envKey; paratils.StringIsEmpty(v) {
+			if v := testData[i].envKey; gohelpers.StringIsEmpty(v) {
 				continue
 			}
 			os.Setenv(testData[i].envKey, testData[i].envValue)
@@ -568,7 +568,7 @@ func TestParse(t *testing.T) {
 	t.Run("with prefix", func(t *testing.T) {
 		prefix := "MOO"
 		for i := range testData {
-			if v := testData[i].envKey; paratils.StringIsEmpty(v) {
+			if v := testData[i].envKey; gohelpers.StringIsEmpty(v) {
 				continue
 			}
 			os.Setenv(strings.Join([]string{prefix, testData[i].envKey}, "_"), testData[i].envValue)
@@ -640,7 +640,7 @@ func TestParse_Default(t *testing.T) {
 		},
 	}
 	for i := range testData {
-		if v := testData[i].envKey; paratils.StringIsEmpty(v) {
+		if v := testData[i].envKey; gohelpers.StringIsEmpty(v) {
 			continue
 		}
 		os.Setenv(testData[i].envKey, testData[i].envValue)
@@ -733,7 +733,7 @@ func TestParse_Validate_Required(t *testing.T) {
 	}
 
 	for i := range testData {
-		if v := testData[i].envKey; paratils.StringIsEmpty(v) {
+		if v := testData[i].envKey; gohelpers.StringIsEmpty(v) {
 			continue
 		}
 		os.Setenv(testData[i].envKey, testData[i].envValue)
@@ -823,7 +823,7 @@ func TestParse_Validate_NotEmpty(t *testing.T) {
 	}
 
 	for i := range testData {
-		if v := testData[i].envKey; paratils.StringIsEmpty(v) {
+		if v := testData[i].envKey; gohelpers.StringIsEmpty(v) {
 			continue
 		}
 		os.Setenv(testData[i].envKey, testData[i].envValue)
@@ -912,7 +912,7 @@ func TestParse_Unset(t *testing.T) {
 	}
 
 	for i := range testData {
-		if v := testData[i].envKey; paratils.StringIsEmpty(v) {
+		if v := testData[i].envKey; gohelpers.StringIsEmpty(v) {
 			continue
 		}
 		os.Setenv(testData[i].envKey, testData[i].envValue)
@@ -982,7 +982,7 @@ func TestParse_File(t *testing.T) {
 		}
 
 		for i := range testData {
-			if v := testData[i].envKey; paratils.StringIsEmpty(v) {
+			if v := testData[i].envKey; gohelpers.StringIsEmpty(v) {
 				continue
 			}
 			os.Setenv(testData[i].envKey, testData[i].envValue)

@@ -1,13 +1,14 @@
 package envar
 
 import (
+	"fmt"
 	"reflect"
 
-	"github.com/ParaServices/errgo"
+	"github.com/neumachen/errorx"
 )
 
 var ErrNestedNotStruct = func(rValue reflect.Value) error {
-	return errgo.NewF("field: %v is not a struct but has nested tag option", rValue.Elem().Type().String())
+	return errorx.New(fmt.Sprintf("field: %v is not a struct but has nested tag option", rValue.Elem().Type().String()))
 }
 
 func handleNested(
@@ -33,7 +34,7 @@ func handledNestedSlice(
 	rValues reflect.Value,
 ) error {
 	if rValues.Kind() != reflect.Slice {
-		return errgo.NewF("nested field: %v is not a slice", rValues.Type().Elem().Name())
+		return errorx.New(fmt.Sprintf("nested field: %v is not a slice", rValues.Type().Elem().Name()))
 	}
 
 	result := reflect.MakeSlice(pField.GetStructField().Type, 0, rValues.Len())
@@ -43,7 +44,7 @@ func handledNestedSlice(
 		}
 		nestedValue := reflect.New(rValues.Type().Elem())
 		if _, err := parse(parserCtx, nestedValue); err != nil {
-			return errgo.New(err)
+			return errorx.New(err)
 		}
 		result = reflect.Append(result, nestedValue)
 	}

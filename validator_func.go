@@ -3,8 +3,8 @@ package envar
 import (
 	"fmt"
 
-	"github.com/ParaServices/errgo"
-	"github.com/ParaServices/paratils"
+	"github.com/neumachen/errorx"
+	"github.com/neumachen/gohelpers"
 )
 
 type validationErrorMap map[string][]string
@@ -33,8 +33,8 @@ func (v validationErrorMap) GetLength() int {
 type ValidatorFunc func(parserCtx ParserCtxAccessor, parsedField ParsedFieldGetter) error
 
 func validateRequired(parserCtx ParserCtxAccessor, parsedField ParsedFieldGetter) error {
-	if paratils.IsNil(parsedField) {
-		return errgo.NewF("parsed field is nil")
+	if gohelpers.IsNil(parsedField) {
+		return errorx.New("parsed field is nil")
 	}
 	if !parsedField.GetEnvFound() {
 		parserCtx.AddValidationError(
@@ -46,10 +46,10 @@ func validateRequired(parserCtx ParserCtxAccessor, parsedField ParsedFieldGetter
 }
 
 func validateNotEmpty(parserCtx ParserCtxAccessor, parsedField ParsedFieldGetter) error {
-	if paratils.IsNil(parsedField) {
-		return errgo.NewF("parsed field is nil")
+	if gohelpers.IsNil(parsedField) {
+		return errorx.New("parsed field is nil")
 	}
-	if paratils.StringIsEmpty(parsedField.GetEnvValue()) {
+	if gohelpers.StringIsEmpty(parsedField.GetEnvValue()) {
 		parserCtx.AddValidationError(
 			parsedField.GetStructField().Name,
 			fmt.Sprintf("env key: %s value is empty", parsedField.GetEnvKey()),
