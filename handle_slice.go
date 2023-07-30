@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/neumachen/gohelpers"
+	"github.com/neumachen/gobag"
 )
 
 func handleSlice(
@@ -14,7 +14,7 @@ func handleSlice(
 	rValue reflect.Value,
 ) error {
 	delim := parserCtx.GetEnvSliceDelim()
-	if v := pField.GetEnvValue(); gohelpers.StringIsEmpty(v) {
+	if v := pField.GetEnvValue(); gobag.StringIsEmpty(v) {
 		delim = defaultDelim
 	}
 	parts := strings.Split(pField.getFieldValue(), delim)
@@ -29,7 +29,7 @@ func handleSlice(
 	}
 
 	parserFunc := parserCtx.GetParserFuncMap().Get(fieldElem)
-	if gohelpers.IsNil(parserFunc) {
+	if gobag.IsNil(parserFunc) {
 		return newNoParserError(pField.GetStructField())
 	}
 

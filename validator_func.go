@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/neumachen/errorx"
-	"github.com/neumachen/gohelpers"
+	"github.com/neumachen/gobag"
 )
 
 type validationErrorMap map[string][]string
@@ -33,7 +33,7 @@ func (v validationErrorMap) GetLength() int {
 type ValidatorFunc func(parserCtx ParserCtxAccessor, parsedField ParsedFieldGetter) error
 
 func validateRequired(parserCtx ParserCtxAccessor, parsedField ParsedFieldGetter) error {
-	if gohelpers.IsNil(parsedField) {
+	if gobag.IsNil(parsedField) {
 		return errorx.New("parsed field is nil")
 	}
 	if !parsedField.GetEnvFound() {
@@ -46,10 +46,10 @@ func validateRequired(parserCtx ParserCtxAccessor, parsedField ParsedFieldGetter
 }
 
 func validateNotEmpty(parserCtx ParserCtxAccessor, parsedField ParsedFieldGetter) error {
-	if gohelpers.IsNil(parsedField) {
+	if gobag.IsNil(parsedField) {
 		return errorx.New("parsed field is nil")
 	}
-	if gohelpers.StringIsEmpty(parsedField.GetEnvValue()) {
+	if gobag.StringIsEmpty(parsedField.GetEnvValue()) {
 		parserCtx.AddValidationError(
 			parsedField.GetStructField().Name,
 			fmt.Sprintf("env key: %s value is empty", parsedField.GetEnvKey()),

@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/neumachen/errorx"
-	"github.com/neumachen/gohelpers"
+	"github.com/neumachen/gobag"
 )
 
 // ParserFunc defines the signature of a function that can be used within `CustomParsers`.
@@ -100,7 +100,7 @@ func defaultParserFuncs() ParserFuncMap {
 			return *u, nil
 		},
 		reflect.TypeOf(os.File{}): func(v string) (interface{}, error) {
-			if gohelpers.StringIsEmpty(v) {
+			if gobag.StringIsEmpty(v) {
 				return nil, errorx.New(fmt.Sprintf("The file %v can not be empty", v))
 			}
 

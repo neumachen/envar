@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/neumachen/errorx"
-	"github.com/neumachen/gohelpers"
+	"github.com/neumachen/gobag"
 )
 
 func newParsedField(parserCtx *ParserCtx, structField reflect.StructField) (*parsedField, error) {
@@ -56,7 +56,7 @@ func (p *parsedField) GetDefaultValue() string {
 // getFieldValue returns the default value if GetEnvValue returns an empty
 // string ("even if the value is blank")
 func (p *parsedField) getFieldValue() string {
-	if v := p.GetEnvValue(); !gohelpers.StringIsEmpty(v) {
+	if v := p.GetEnvValue(); !gobag.StringIsEmpty(v) {
 		return v
 	}
 	return p.GetDefaultValue()
@@ -75,7 +75,7 @@ func (p *parsedField) GetEnvPrefix() string {
 
 // GetEnvKey joins the EnvPrefix and EnvName
 func (p *parsedField) GetEnvKey() string {
-	if gohelpers.StringIsEmpty(p.GetEnvPrefix()) {
+	if gobag.StringIsEmpty(p.GetEnvPrefix()) {
 		return p.GetEnvName()
 	}
 	return strings.Join([]string{p.GetEnvPrefix(), p.GetEnvName()}, p.envPrefixDelim)
@@ -140,7 +140,7 @@ func (p *parsedField) setEnvValue(eMap EnvVarsMap) error {
 }
 
 func (p *parsedField) setField(parserCtx *ParserCtx, fieldValue reflect.Value) error {
-	if v := p.getFieldValue(); gohelpers.StringIsEmpty(v) {
+	if v := p.getFieldValue(); gobag.StringIsEmpty(v) {
 		return nil
 	}
 
@@ -163,7 +163,7 @@ func (p *parsedField) setField(parserCtx *ParserCtx, fieldValue reflect.Value) e
 	}
 
 	parserFunc := parserCtx.GetParserFuncMap().Get(p.GetStructField().Type)
-	if !gohelpers.IsNil(parserFunc) {
+	if !gobag.IsNil(parserFunc) {
 		val, err := parserFunc(p.getFieldValue())
 		if err != nil {
 			return newParseError(p.GetStructField(), err)
@@ -235,7 +235,7 @@ func (t tagOpts) getUnsetKey() bool {
 	if !ok {
 		return false
 	}
-	return gohelpers.ArrayContainsStr(trueStrs, v)
+	return gobag.ArrayContainsStr(trueStrs, v)
 }
 
 // func (t tagOpts) getExpandKey() bool {
@@ -243,7 +243,7 @@ func (t tagOpts) getUnsetKey() bool {
 // 	if !ok {
 // 		return false
 // 	}
-// 	return gohelpers.ArrayContainsStr(trueStrs, v)
+// 	return gobag.ArrayContainsStr(trueStrs, v)
 // }
 
 func (t tagOpts) getDefaultValue() string {
@@ -258,7 +258,7 @@ func removeEmptyString(slice *[]string) {
 	i := 0
 	p := *slice
 	for _, entry := range p {
-		if !gohelpers.StringIsEmpty(entry) {
+		if !gobag.StringIsEmpty(entry) {
 			p[i] = entry
 			i++
 		}

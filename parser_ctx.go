@@ -3,7 +3,7 @@ package envar
 import (
 	"reflect"
 
-	"github.com/neumachen/gohelpers"
+	"github.com/neumachen/gobag"
 )
 
 type ParserCtx struct {
@@ -84,7 +84,7 @@ func (p *ParserCtx) SetParserFuncMap(fnMap ParserFuncMap) error {
 }
 
 func (p *ParserCtx) AddParserFunc(rType reflect.Type, fn ParserFunc) {
-	if gohelpers.IsNil(rType) {
+	if gobag.IsNil(rType) {
 		return
 	}
 	if p.parserFuncMap == nil {
@@ -102,7 +102,7 @@ func (p *ParserCtx) SetValidatorFuncsMap(fnMap ValidatorFuncsMap) error {
 }
 
 func (p *ParserCtx) AddValidatorFunc(validatorKey string, fn ValidatorFunc) {
-	if gohelpers.IsNil(fn) {
+	if gobag.IsNil(fn) {
 		return
 	}
 	if p.validatorFuncsMap == nil {
